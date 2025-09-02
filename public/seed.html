@@ -1,0 +1,60 @@
+<!doctype html><meta charset="utf-8">
+<title>Seed Supabase</title>
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+const supabase = createClient("https://YOUR-PROJECT.supabase.co", "YOUR-ANON-KEY");
+
+function rnd(a,b){ return Math.floor(Math.random()*(b-a+1))+a }
+function pick(a){ return a[Math.floor(Math.random()*a.length)] }
+
+async function run(){
+  const now = new Date();
+  const days = 14;
+  let rows = [];
+  for(let d=days; d>0; d--){
+    const day = new Date(now.getTime() - d*86400000);
+    const pv_a = rnd(60,120), pv_b = rnd(80,160);
+    for (const [page, pv] of [["version-a.html", pv_a], ["version-b.html", pv_b]]) {
+      for (let i=0;i<pv;i++){
+        const visit = new Date(day.getTime() + rnd(9*60, 21*60)*60000);
+        const sess = `${page[8]}-${d}-${i}-${rnd(1000,9999)}`;
+
+        rows.push({ ts:+visit, event_type:"page_view", page, session_id:sess, user_id:null, meta:{referrer:pick(["google","direct","ad","social"])} });
+
+        const tms = rnd(10000, 180000), max_scroll = rnd(40,100);
+        rows.push({ ts:+visit + tms, event_type:"scroll", page, session_id:sess, user_id:null, meta:{max_scroll_pct:max_scroll, time_on_page_ms:tms} });
+        rows.push({ ts:+visit + tms, event_type:"section_dwell", page, session_id:sess, user_id:null,
+          meta:{section_times:{hero:rnd(1000,5000), images:rnd(2000,8000), detail:rnd(3000,12000), reviews:rnd(1000,6000)}} });
+
+        const add_cart_p = page==="version-a.html" ? 0.30 : 0.25;
+        const purchase_p = page==="version-a.html" ? 0.12 : 0.10;
+        const did_cart = Math.random() < add_cart_p;
+        const did_buy  = Math.random() < purchase_p;
+
+        let cart_ts = null;
+        if (did_cart) {
+          cart_ts = +visit + rnd(1,30)*60000;
+          rows.push({ ts:cart_ts, event_type:"add_to_cart", page, session_id:sess, user_id:null, meta:{} });
+        }
+        if (did_buy) {
+          if (did_cart && Math.random() < 0.65) {
+            const delay = Math.max(1, Math.round(Math.abs(45 + 25*(Math.random()*2-1)))); // ~N(45,25)
+            rows.push({ ts:cart_ts + delay*60000, event_type:"purchase", page, session_id:sess, user_id:null, meta:{source:"cart", ms_since_cart:delay*60000} });
+          } else {
+            const delay = Math.max(1, rnd(1,16)); // direct
+            rows.push({ ts:+visit + delay*60000, event_type:"purchase", page, session_id:sess, user_id:null, meta:{source:"direct", ms_since_cart:null} });
+          }
+        }
+      }
+    }
+    // 배치 insert (1000개씩 끊기)
+    while(rows.length){
+      const chunk = rows.splice(0, 1000);
+      const { error } = await supabase.from("events").insert(chunk);
+      if(error){ console.error(error); alert("Insert error: "+error.message); return; }
+    }
+  }
+  alert("✅ Seed complete.");
+}
+run();
+</script>

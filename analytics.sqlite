@@ -1,0 +1,103 @@
+# backend/seed.py
+import os, json, sqlite3, random, time
+from datetime import datetime, timedelta
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DB_PATH  = os.path.join(BASE_DIR, "analytics.sqlite")
+
+random.seed(42)
+
+def ensure_table():
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ts INTEGER NOT NULL,
+        event_type TEXT NOT NULL,
+        page TEXT,
+        session_id TEXT,
+        user_id TEXT,
+        meta TEXT
+    )
+    """)
+    con.commit()
+    con.close()
+
+def insert(con, ts, t, page, sess, meta):
+    cur = con.cursor()
+    cur.execute(
+        "INSERT INTO events (ts, event_type, page, session_id, user_id, meta) VALUES (?,?,?,?,?,?)",
+        (ts, t, page, sess, None, json.dumps(meta, ensure_ascii=False))
+    )
+
+def ms(dt):  # to epoch ms
+    return int(dt.timestamp() * 1000)
+
+def simulate():
+    ensure_table()
+    con = sqlite3.connect(DB_PATH)
+    cur = con.cursor()
+    # 깨끗하게 테스트하고 싶다면 다음 주석 해제 (모든 데이터 삭제)
+    # cur.execute("DELETE FROM events")
+
+    now = datetime.now()
+    days = 14
+
+    for d in range(days, 0, -1):
+        day = (now - timedelta(days=d))
+        # 일별 트래픽: B가 PV는 조금 더 높고, A가 전환은 약간 높게
+        pv_a = random.randint(60, 120)
+        pv_b = random.randint(80, 160)
+
+        for page, pv in (("version-a.html", pv_a), ("version-b.html", pv_b)):
+            for i in range(pv):
+                # 각 세션 시각 분포
+                visit = day + timedelta(minutes=random.randint(9*60, 21*60))  # 09:00~21:59
+                sess  = f"{page[:1]}-{d}-{i}-{random.randint(1000,9999)}"
+                # page_view
+                insert(con, ms(visit), "page_view", page, sess, {"referrer": random.choice(["google","direct","ad","social"])})
+
+                # scroll/time_on_page
+                tms = random.randint(10_000, 180_000)  # 10s ~ 3m
+                max_scroll = random.randint(40, 100)
+                insert(con, ms(visit + timedelta(seconds=tms/1000)), "scroll", page, sess,
+                       {"max_scroll_pct": max_scroll, "time_on_page_ms": tms})
+
+                # section_dwell (대략적인 섹션 시간)
+                sections = {"hero": random.randint(1000, 5000),
+                            "images": random.randint(2000, 8000),
+                            "detail": random.randint(3000, 12000),
+                            "reviews": random.randint(1000, 6000)}
+                insert(con, ms(visit + timedelta(seconds=(tms/1000))), "section_dwell", page, sess,
+                       {"section_times": sections})
+
+                # 장바구니 & 구매 확률 (A는 전환률 약간 높게, B는 바로구매 비중↑)
+                add_cart_p = 0.30 if page == "version-a.html" else 0.25
+                purchase_p = 0.12 if page == "version-a.html" else 0.10
+
+                did_cart = (random.random() < add_cart_p)
+                did_buy  = (random.random() < purchase_p)
+
+                if did_cart:
+                    cart_ts = visit + timedelta(minutes=random.randint(1, 30))
+                    insert(con, ms(cart_ts), "add_to_cart", page, sess, {})
+
+                if did_buy:
+                    if did_cart and random.random() < 0.65:  # 장바구니 경유 구매
+                        delay_min = int(abs(random.gauss(45, 25)))  # 평균 45분(로그/지수 느낌 가미)
+                        buy_ts = cart_ts + timedelta(minutes=delay_min)
+                        insert(con, ms(buy_ts), "purchase", page, sess,
+                               {"source": "cart", "ms_since_cart": delay_min*60*1000})
+                    else:  # 바로구매
+                        delay_min = int(abs(random.gauss(8, 6)))   # 평균 8분
+                        buy_ts = visit + timedelta(minutes=delay_min)
+                        insert(con, ms(buy_ts), "purchase", page, sess,
+                               {"source": "direct", "ms_since_cart": None})
+
+    con.commit()
+    con.close()
+    print("✅ Seed complete.")
+
+if __name__ == "__main__":
+    simulate()

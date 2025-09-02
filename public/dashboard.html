@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Behavior Dashboard</title>
+  <style>
+    /* 기존 CSS 내용 유지 */
+    body { font-family: sans-serif; line-height: 1.6; margin: 0; padding: 20px; background-color: #f4f4f4; color: #333; }
+    .container { max-width: 960px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    h1, h2, h3, h4 { color: #0056b3; }
+    .kpis { display: flex; justify-content: space-around; margin-bottom: 30px; }
+    .kpi-card { background-color: #e9f5ff; padding: 20px; border-radius: 8px; text-align: center; min-width: 150px; }
+    .kpi-card h3 { margin-bottom: 5px; color: #007bff; }
+    .kpi-card p { font-size: 2em; font-weight: bold; margin: 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .chart { margin-top: 20px; padding: 10px; border: 1px solid #eee; border-radius: 5px; background-color: #fdfdfd; }
+    .bar-wrapper { display: flex; align-items: center; margin-bottom: 5px; }
+    .bar-label { width: 150px; margin-right: 10px; font-size: 0.9em; }
+    .bar { height: 20px; line-height: 20px; color: white; text-align: right; padding-right: 5px; border-radius: 3px; font-size: 0.8em; transition: width 0.5s ease-out; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://eweoumauqncfdrqybyjz.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3ZW91bWF1cW5jZmRycXlieWp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2ODAxNjgsImV4cCI6MjA3MjI1NjE2OH0.pt_XspiK-ZjnegWpq0gnuGrLnBvk41i1ZWYhePMgwwc';
+    window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY); // 전역으로 사용 가능하게 함
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Behavior Dashboard</h1>
+
+    <div class="kpis">
+      <div class="kpi-card">
+        <h3>Page Views</h3>
+        <p id="page-views">0</p>
+      </div>
+      <div class="kpi-card">
+        <h3>Add to Cart</h3>
+        <p id="add-to-cart">0</p>
+      </div>
+      <div class="kpi-card">
+        <h3>Purchases</h3>
+        <p id="purchases">0</p>
+      </div>
+    </div>
+
+    <h2>A/B Test Results</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Page Version</th>
+          <th>Page Views</th>
+          <th>Purchases</th>
+          <th>Conversion Rate</th>
+        </tr>
+      </thead>
+      <tbody id="ab-results">
+        </tbody>
+    </table>
+
+    <div id="dwell-time-chart" class="chart">
+      </div>
+  </div>
+
+  <script type="module" src="/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+name: portfolio-analytics
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - uvicorn
+  - fastapi
+  - sqlalchemy>=2.0
+  - aiosqlite
+  - pydantic
+  - pip:
+    - python-dotenv
+    - supabase
