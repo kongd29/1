@@ -1,4 +1,4 @@
-// seed-supabase.js
+
 import { createClient } from '@supabase/supabase-js';
 
 // 사용자님의 Supabase 정보를 코드에 직접 입력합니다.

@@ -15,7 +15,7 @@
     "@supabase/supabase-js": "^2.56.1"
   },
   "description": "두 가지 버전의 상품 상세 페이지(A/B 테스트)를 배포하고, 사용자의 행동 데이터를 수집하여 어떤 UI/UX가 더 높은 구매 전환율을 보이는지 분석하는 시스템을 구축합니다. 이 프로젝트는 서버 없이 프런트엔드와 BaaS(Backend as a Service)만을 사용하여 최신 웹 기술 트렌드를 적용하는 데 중점을 두었습니다.",
-  "main": "seed-supabase.js",
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kongd29/1.git"

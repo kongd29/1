@@ -39,7 +39,7 @@
 2.  **Supabase 가상 데이터 주입 (최초 1회)**
     Supabase에 분석할 가상 데이터를 채워 넣습니다.
     ```bash
-    node seed-supabase.js
+
     ```
     *(이 스크립트는 `events` 테이블의 기존 데이터를 모두 삭제하고 새로운 데이터를 생성합니다.)*
 
