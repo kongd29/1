@@ -170,6 +170,10 @@
   <!-- 트래킹: 반드시 body 끝에 -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    // 참고: 아래 코드는 Vite와 같은 빌드 도구를 사용할 때 동작합니다.
+    // 만약 HTML 파일을 직접 연다면, import.meta.env.VITE_... 부분을 실제 Supabase URL과 Key 값으로 바꿔야 합니다.
+    // 예: const supabaseUrl = "https://xyz.supabase.co";
+    // 예: const supabaseKey = "your-anon-key";
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
     window.supabase = createClient(supabaseUrl, supabaseKey);
