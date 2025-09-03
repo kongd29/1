@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+NODE_VERSION = "20"
+NETLIFY_BUILD_DEBUG = "true"
+VITE_SUPABASE_URL = "<https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2>"
+VITE_SUPABASE_KEY = "<https://eweoumauqncfdrqybyjz.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3ZW91bWF1cW5jZmRycXlieWp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2ODAxNjgsImV4cCI6MjA3MjI1NjE2OH0.pt_XspiK-ZjnegWpq0gnuGrLnBvk41i1ZWYhePMgwwc>"

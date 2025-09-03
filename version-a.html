@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>오예스 - G마켓 스타일</title>
 
-  <!-- GA4 Global Site Tag (gtag.js) -->
+  <!-- GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-366878267"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -13,9 +13,9 @@
     gtag('config', 'G-366878267');
   </script>
 
-  <!-- 이 파일들이 실제로 없다면 지워도 됩니다. -->
+  <!-- CSS (파일이 있으면 유지, 없으면 지워도 됨) -->
   <link rel="stylesheet" href="/assets/version-a.css">
-  <script src="/assets/version-a.js"></script>
+  <!-- ❌ 여기에 페이지 JS를 넣지 마세요 (Vite는 body 끝에서 module 로드) -->
 </head>
 <body>
   <header style="background:#0080ff;color:#fff;padding:1.5em;text-align:center;">
@@ -25,7 +25,6 @@
   <main style="max-width:900px;margin:2em auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:2em;">
     <section class="product track-section" style="display:flex;gap:2em;flex-wrap:wrap;align-items:flex-start;">
       <div class="img-box" style="flex:1;min-width:320px;text-align:center;">
-        <!-- ★ 오타/따옴표 수정 + 절대경로 사용 -->
         <img src="/assets/ori.jpg" alt="오예스 오리지널" class="product-img"
              style="width:320px;max-width:100%;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);" />
       </div>
@@ -95,14 +94,18 @@
     </section>
   </main>
 
-  <!-- 트래킹 -->
+  <!-- 트래킹: 반드시 body 끝에 -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
-    // analytics.js에서 사용할 수 있도록 window 객체에 할당합니다.
     window.supabase = createClient(supabaseUrl, supabaseKey);
   </script>
   <script src="/analytics.js" defer></script>
+
+  <!-- ✅ 페이지 스크립트: Vite 방식 (루트에 version-a.js가 있다고 가정) -->
+  <script type="module" src="/version-a.js"></script>
+  <!-- 만약 파일이 assets/ 안에 있으면 위 한 줄을 다음으로 바꿔: -->
+  <!-- <script type="module" src="/assets/version-a.js"></script> -->
 </body>
 </html>
