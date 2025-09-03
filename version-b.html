@@ -16,22 +16,9 @@
   <link rel="stylesheet" href="/assets/version-b.css">
 </head>
 <body>
-  <!-- 상단 경고 메시지 -->
-  <div style="width:100%;background:#ffeaea;color:#d50000;text-align:center;padding:6px 0;font-size:1em;font-weight:600;letter-spacing:0.5px;box-shadow:0 1px 4px rgba(0,0,0,0.04);">
-    긴급! <span style="background:yellow;color:#d50000;padding:0 4px;border-radius:3px;">(강조)</span> 재고 3개 남음
-  </div>
+  <!-- 본문은 그대로 유지 -->
 
-  <!-- 헤더 -->
-  <header class="track-section" style="display:flex;align-items:center;gap:18px;padding:16px 24px 0 24px;justify-content:center;position:relative;min-height:90px;background:#ffb74d;">
-    <!-- …(중략: 네가 올린 그대로 유지)… -->
-  </header>
-
-  <!-- 메인 콘텐츠 -->
-  <main>
-    <!-- …(중략: 네가 올린 그대로 유지)… -->
-  </main>
-
-  <!-- 트래킹: 반드시 body 끝에 -->
+  <!-- 트래킹 + 페이지 스크립트: 반드시 body 끝에 -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -40,9 +27,9 @@
   </script>
   <script src="/analytics.js" defer></script>
 
-  <!-- ✅ 페이지 스크립트: Vite 방식 (루트에 version-b.js가 있다고 가정) -->
+  <!-- 페이지 전용 JS (루트에 version-b.js가 있을 때) -->
   <script type="module" src="/version-b.js"></script>
-  <!-- 만약 파일이 assets/ 안에 있으면 위 한 줄을 다음으로 바꿔: -->
+  <!-- 만약 assets 폴더에 있다면 위 줄 대신 ↓ 사용 -->
   <!-- <script type="module" src="/assets/version-b.js"></script> -->
 </body>
 </html>
